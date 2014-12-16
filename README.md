@@ -1,7 +1,10 @@
-gpg-mailfilter
+exim-gpg-filter
 ==============
 
-Exim4 transport-filter to automatically encrypt outgoing emails
+Exim4 transport-filter to automatically
+and transparently
+encrypting outgoing emails
+for all recipients
 
 <pre>
 remote_smtp:

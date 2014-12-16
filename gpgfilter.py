@@ -30,7 +30,10 @@ content = ''.join(lines[k+1:])
 
 # encrypt content
 gpg = gnupg.GPG()
+
+# TODO: derive recipients from To,CC,BCC and Received:for headers
 recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de']
+
 content = str(gpg.encrypt(content, recipients, always_trust=True))
 
 # re-assemble headers and content
