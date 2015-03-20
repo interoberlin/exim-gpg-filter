@@ -25,7 +25,7 @@ while (i < len(lines)):
     removed = False
     for j in range(len(dont_show)):
         if lines[i].find(dont_show[j]) > -1:
-            log.write('gpgfilter: Removed line "'+lines[i]+'"\n')
+            log.write('gpgfilter: Removed line "'+lines[i].replace('\n','')+'"\n')
             lines.remove( lines[i] )
             removed = True
             break
