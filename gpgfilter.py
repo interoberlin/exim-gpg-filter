@@ -43,6 +43,8 @@ for k in range(len(lines)):
 headers = ''.join(lines[:k])
 content = ''.join(lines[k+1:])
 
+headers += 'Subject: [Redmine]\n'
+
 # encrypt content
 gpg = gnupg.GPG()
 
