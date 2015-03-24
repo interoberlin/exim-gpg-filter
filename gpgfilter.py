@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+#
+# This script is run by exim
+# In Debian this scripts is run by user Debian-exim
+#
+
 import sys
 import gnupg
 
@@ -49,14 +54,18 @@ headers += 'Subject: [Redmine]\n'
 gpg = gnupg.GPG()
 
 # TODO: derive recipients from To,CC,BCC and Received:for headers
-recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com']
+recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org']
 
 content = str(gpg.encrypt(content, recipients, always_trust=True))
 
 # re-assemble headers and content
 message = headers+'\n'+content
 
+#from subprocess import Popen, PIPE
+#log.write( Popen(['whoami'], stdout=PIPE).communicate()[0]+'\n' )
+
 # output manipulated message
 print message
 
 log.close()
+
