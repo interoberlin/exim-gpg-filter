@@ -7,33 +7,51 @@
 
 import sys
 import gnupg
+import pprint
+from subprocess import Popen,PIPE
 
 # message is piped to this script from stdin 
 lines = sys.stdin.readlines()
 
 log = open('/var/log/exim4/mainlog','a')
 
+debug = False
+if debug:
+    log.write('gpgfilter: running as user '+Popen(['whoami'],stdout=PIPE).communicate()[0])
+
 # only filter emails from certain senders
 mail = ''.join(lines)
 if mail.find('redmine@interoberlin.de') == -1:
-	print mail.strip()
-	log.write('gpgfilter: not encrypting\n')
-	exit(0)
-
-log.write('gpgfilter: message encrypted\n')
+    print mail.strip()
+    log.write('gpgfilter: not encrypting\n')
+    exit(0)
 
 # strip unencrypted Redmine headers
-dont_show = ['X-Mailer: Redmine\n', 'X-Redmine-', 'Subject:']
+dont_show = ['X-Mailer: ', 'X-Redmine-', 'Subject: ','List-Id: ']
 i = 0
 # for all lines:
 while (i < len(lines)):
     removed = False
+
+    # for all field not to show:
     for j in range(len(dont_show)):
+        # does current line contain the not to be shown field?
         if lines[i].find(dont_show[j]) > -1:
-            log.write('gpgfilter: Removed line "'+lines[i].replace('\n','')+'"\n')
+            # found: remove
+            if debug:
+                log.write('gpgfilter: removed line "'+lines[i].replace('\n','')+'"\n')
             lines.remove( lines[i] )
             removed = True
+            
+            # also cut following lines, if they belong to current line
+            while (len(lines[i]) > 0 and lines[i][0] == ' '):
+                if debug:
+                    log.write('gpgfilter: also removed line "'+lines[i].replace('\n','')+'"\n')
+                lines.remove( lines[i] )
+                
             break
+
+    # if current line was removed, i already points to next line
     if not removed:
         i += 1
 
@@ -51,21 +69,26 @@ content = ''.join(lines[k+1:])
 headers += 'Subject: [Redmine]\n'
 
 # encrypt content
-gpg = gnupg.GPG()
+gpg = gnupg.GPG(gnupghome='/var/spool/exim4/.gnupg/')
 
 # TODO: derive recipients from To,CC,BCC and Received:for headers
 recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org']
 
+if debug:
+    log.write('Available keys:\n'+pprint.pformat(gpg.list_keys())+'\n')
+    log.write(content+'\n')
+
 content = str(gpg.encrypt(content, recipients, always_trust=True))
+
+if debug:
+    log.write(content)
+else:
+    log.write('gpgfilter: message encrypted\n')
 
 # re-assemble headers and content
 message = headers+'\n'+content
-
-#from subprocess import Popen, PIPE
-#log.write( Popen(['whoami'], stdout=PIPE).communicate()[0]+'\n' )
 
 # output manipulated message
 print message
 
 log.close()
-
