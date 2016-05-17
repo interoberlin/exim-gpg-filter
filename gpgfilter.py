@@ -22,6 +22,9 @@ if debug:
 # only filter emails from certain senders
 mail = ''.join(lines)
 
+def escape(content):
+    return content.replace("=C3=A4","ae").replace("=C3=BC","ue").replace("=C3=B6","oe").replace("=C3=84","Ae").replace("=C3=96","Oe").replace("=C3=9C","Ue").replace("=C3=9F","ss")
+
 if mail.find('redmine@interoberlin.de') != -1 :
 	# strip unencrypted Redmine headers
 	dont_show = ['X-Mailer: ', 'X-Redmine-', 'Subject: ','List-Id: ', 'Content-Transfer-Encoding: ']
@@ -79,6 +82,7 @@ if mail.find('redmine@interoberlin.de') != -1 :
 	#	log.write(content+'\n')
 
 	#content = str(gpg.encrypt(content, recipients, always_trust=True))
+	content = escape(content)
 	content = encrypt(content, recipients)
 
 	if debug:
