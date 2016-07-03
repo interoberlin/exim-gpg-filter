@@ -24,14 +24,20 @@ class RedmineMail:
         for i in range(len(self.lines)):
             # line begins with separator string
             if self.lines[i].find('--------') == 0:
+                # found
                 return i
+        # not found
+        return -1
 
     #
     # Extract the first line of the Redmine ticket body
     #
     def getTicketBodyHeader(self):
         # ticket body immediately starts after separator line
-        return self.lines[self.getSeparatorLineIndex()+1]
+        i = self.getSeparatorLineIndex()
+        if i == -1 or len(self.lines) < i:
+            return ""
+        return self.lines[i+1]
 
     #
     # Parse, to which Tracker the mail content is subject to
@@ -40,7 +46,10 @@ class RedmineMail:
     #
     def getTracker(self):
         # the string before the '#'
-        return self.getTicketBodyHeader().split('#')[0].strip()
+        s = self.getTicketBodyHeader()
+        if s.find('#') < 0:
+            return ""
+        return s.split('#')[0].strip()
     
     #
     # Parse, to which Ticket number the mail content is subject to
@@ -49,7 +58,10 @@ class RedmineMail:
     #
     def getTicketNumber(self):
         # the number after the '#'
-        return self.getTicketBodyHeader().split('#')[1].split(':')[0]
+        s = self.getTicketBodyHeader()
+        if s.find('#') < 0 or s.find(':') < 0:
+            return ""
+        return s.split('#')[1].split(':')[0]
 
 #
 # Unit-Test
