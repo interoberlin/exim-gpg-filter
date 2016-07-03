@@ -9,6 +9,7 @@ import sys
 from gpg2 import encrypt
 import pprint
 from subprocess import Popen,PIPE
+from redmine import RedmineMail
 
 # message is piped to this script from stdin 
 lines = sys.stdin.readlines()
@@ -66,8 +67,10 @@ if mail.find('redmine@interoberlin.de') != -1 :
 	headers = ''.join(lines[:k])
 	content = ''.join(lines[k+1:])
 
-	headers += 'Subject: [Redmine]\n'
-	headers += 'Content-Transfer-Encoding: 8bit\n'
+	rmail = RedmineMail(lines[k+1:])
+	headers += "Subject: [Redmine] "+rmail.getTracker()+" #"+rmail.getTicketNumber()+"\n"
+#	headers += "Subject: [Redmine]\n"
+	headers += "Content-Transfer-Encoding: 8bit\n"
 
 	# encrypt content
 	#gpg = gnupg.GPG(gnupghome='/var/spool/exim4/.gnupg/', gpgbinary="/usr/bin/gpg2")
