@@ -77,8 +77,9 @@ if mail.find('redmine@interoberlin.de') != -1 :
 	#gpg.encoding = 'utf-8'
 
 	# TODO: derive recipients from To,CC,BCC and Received:for headers
-	recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org','longpham@hotmail.de','issac.zyborg@gmail.com']
-	# recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org','julian.weissgerber@geulengracht.de']
+	# recipients = ["email@alice.org", "email@bob.org"]
+	print message
+	return
 
 	#if debug:
 	#	log.write('Available keys:\n'+pprint.pformat(gpg.list_keys())+'\n')
@@ -146,8 +147,9 @@ elif mail.find('gitlab@interoberlin.de') != -1 :
 	gpg = gnupg.GPG(gnupghome='/var/spool/exim4/.gnupg/')
 
 	# TODO: derive recipients from To,CC,BCC and Received:for headers
-	recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org']
-	# recipients = ['mail@matthiasbock.net','florian.schwanz@interoberlin.de','t.kuban@googlemail.com','lukas@autistici.org','julian.weissgerber@geulengracht.de']
+	# recipients = ["email@alice.org", "email@bob.org"]
+	print message
+	return
 	
 	if debug:
 		log.write('Available keys:\n'+pprint.pformat(gpg.list_keys())+'\n')
